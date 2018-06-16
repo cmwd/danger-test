@@ -20,5 +20,8 @@
   "homepage": "https://github.com/cmwd/danger-test#readme",
   "dependencies": {
     "danger": "^3.7.18"
+  },
+  "devDependencies": {
+    "jest": "^23.1.0"
   }
 }

@@ -3,7 +3,7 @@ import { message, warn, fail, danger } from 'danger';
 const modifiedMD = danger.git.modified_files.join('- ');
 message('Changed Files in this PR: \n - ' + modifiedMD);
 
-if (pr.assignee === null) {
+if (danger.github.pr.assignee === null) {
   const method = pr.title.includes('WIP') ? warn : fail;
   method(
     'Please assign someone to merge this PR, and optionally include people who should review.'

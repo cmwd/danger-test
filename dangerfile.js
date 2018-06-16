@@ -1,15 +1,16 @@
-import { message, warn, fail, danger } from 'danger';
+const { message, warn, fail, danger } = require('danger');
+const path = require('path');
 
 const JIRA_ISSUE_REGEXP = /^\[(\w+\-\d+)\]/;
 const BRANCH_FORMAT_REGEXP = /^(\w+?)\//;
 
+const { href: createLink } = danger.utils;
 const modifiedMD = danger.git.modified_files.join('- ');
 const [, jiraId] = danger.github.pr.title.match(JIRA_ISSUE_REGEXP) || [];
 const [, changeType] =
   danger.github.pr.head.ref.match(BRANCH_FORMAT_REGEXP) || [];
 const { pr } = danger.github;
-
-console.log(modifiedMD);
+const { created_files, modified_files } = danger.git;
 
 message('Changed Files in this PR: \n - ' + modifiedMD);
 
@@ -26,7 +27,7 @@ if (!jiraId) {
   warn(`PR title should start with task id, e.g: "[PROJECT-01] Issue title"`);
 } else {
   message(
-    danger.utils.href(
+    createLink(
       `https://10clouds.atlassian.net/browse/${jiraId}`,
       'Go to issue page'
     )
@@ -52,4 +53,22 @@ $ git branch --list "feature/*"
 feature/foo
 feature/frabnotz
   `);
+}
+
+if (
+  [...created_files, ...modified_files].some(file =>
+    ['.css', '.sass', '.scss', '.less'].includes(path.extname(file))
+  )
+) {
+  try {
+    require.resolve('stylelint');
+  } catch (error) {
+    warn(`
+It seems that you're working on styles but I can't find linter in the codebase.
+${createLink(
+      'https://stylelint.io/user-guide/',
+      'Consider adding stylelint to your application'
+    )}
+`);
+  }
 }

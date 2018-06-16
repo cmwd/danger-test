@@ -4,5 +4,5 @@ cache:
   - node_modules
 
 node_js: node
-script:
-- npm run danger run --verbose
+before_script:
+- npm run danger ci
